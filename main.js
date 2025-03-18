@@ -1,15 +1,20 @@
 const WIN_DICT = {
-    "rock": "scissors",
-    "paper": "rock",
-    "scissors": "paper"
+    "Rock": "Scissors",
+    "Paper": "Rock",
+    "Scissors": "Paper"
 }
 
 class Player {    
-    constructor(name=null, option=null) {
+    constructor(name=null, ID = null, option=null) {
         this.name = name;
         this.option = option;
         this.wins = 0;
         this.losses = 0;
+        this.ID = ID;
+    }
+
+    getID() {
+        return this.ID;
     }
 
     setName(newName) {
@@ -56,29 +61,42 @@ class Player {
 
 class Game {
     constructor(player1= null, player2 = null) {
-        this.players = [
-            player1,
-            player2
-        ]
+        this.players = []
     }
 
     gameSetup() {
-        const player1 = new Player("Bob");
-        const player2 = new Player("Matt");
-        
-        this.player1 = player1;
-        this.player2 = player2;
-        
+        const player1 = new Player("Bob", 1);
+        const player2 = new Player("Matt", 2);
+
+
+        this.players = [
+            player1,
+            player2
+        ];
+
         const player1Name = document.getElementById("player1-name");
-        player1Name.textContent = player1Name.textContent.concat(this.player1.getName())
+        player1Name.textContent = player1.getName();
         
         
         const player2Name = document.getElementById("player2-name");
-        player2Name.textContent = player2Name.textContent.concat(this.player2.getName())
+        player2Name.textContent = player2.getName();
+    }
+
+    playersReady() {
+        for(let player of this.players) {
+            if(!player.getOption()) { //if option is not filled return false
+                return false;
+            }
+        }
+        return true; //return true if all options are filled
     }
 
     selectedOption(player, option) {
         player.setOption(option);
+        console.log(`Player ${player.getName()} selected ${option}.`);
+        if(this.playersReady()) {
+            this.checkWinner();
+        }
     }
 
     checkWinner() {
@@ -90,11 +108,13 @@ class Game {
             //WIN LOSS found match found for player 1 - player 1 wins
             else if(WIN_DICT[this.players[0].getOption()] === this.players[1].getOption()) {
                 this.players[0].addWin();
-                this.player[1].addLoss();
+                this.players[1].addLoss();
+                console.log(`Player ${this.players[0].getName()} Wins! has ${this.players[0].getScore().wins} wins!`);
             }
             else {
                 this.players[1].addWin();
                 this.players[0].addLoss();
+                console.log(`Player ${this.players[1].getName()} Wins! He has ${this.players[1].getScore().wins} wins!`);
             }
     
             this.resetPlayerOptions();
@@ -111,15 +131,17 @@ const game = new Game();
 
 game.gameSetup();
 
-for(let player in game.players) {
-    const currentBtn = document.getElementsByClassName("option-btn");
-    currentBtn.onclick = function() {optionClick(player, currentBtn.value)}
+for(let player of game.players) {
+    const currentBtns = document.getElementsByClassName("option-btn-"+player.getID());
+    for(let btn of currentBtns) {
+        btn.onclick = function() {optionClick(player, btn.textContent)}
+    }
 }
 
+function ready(playerText) {
+    playerText.style.color = "green";
+}
 
 function optionClick(player, selectedOption) {
-    console.log("Player: " + player.getName());
-    console.log("Option: " + selectedOption);
+    game.selectedOption(player, selectedOption)
 }
-
-// console.log(player1Name.textContent);
