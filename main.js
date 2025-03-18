@@ -131,17 +131,45 @@ const game = new Game();
 
 game.gameSetup();
 
-for(let player of game.players) {
-    const currentBtns = document.getElementsByClassName("option-btn-"+player.getID());
-    for(let btn of currentBtns) {
-        btn.onclick = function() {optionClick(player, btn.textContent)}
-    }
+// for(let player of game.players) {
+//     const currentBtns = document.getElementsByClassName("option-btn-"+player.getID());
+//     for(let btn of currentBtns) {
+//         btn.onclick = function() {optionClick(player, btn.textContent)}
+//     }
+// }
+
+const currentBtns = document.getElementsByClassName("option-btn-1");
+let currentSelectedBtn = null;
+
+document.querySelectorAll('.card-container i').forEach(icon => {
+    icon.classList.remove('bump-up'); // Reset animation
+});
+
+for(let btn of currentBtns) {
+            btn.onclick = function() {optionClick(game.players[0], btn.textContent, btn)};
 }
 
 function ready(playerText) {
     playerText.style.color = "green";
 }
 
-function optionClick(player, selectedOption) {
-    game.selectedOption(player, selectedOption)
+function optionClick(player, selectedOption, btn) {
+    if(currentSelectedBtn !== null) {
+        currentSelectedBtn.style.borderColor = '#7d7d9a';
+        currentSelectedBtn.style.color = '#2f3944';
+        currentSelectedBtn.style.scale = 1.0;
+    }
+    game.selectedOption(player, selectedOption);
+    btn.style.borderColor = '#EB7B7B';
+    btn.style.scale = 1.1;
+    btn.style.color = '#EB7B7B';
+
+    document.querySelectorAll('.card-container i').forEach(icon => {
+        icon.addEventListener('click', () => {
+            icon.classList.remove('bump-up'); // Reset animation
+            void icon.offsetWidth; // Force reflow to restart animation
+            icon.classList.add('bump-up');
+        });
+    });
+    currentSelectedBtn = btn;
 }
