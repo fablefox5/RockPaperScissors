@@ -155,21 +155,29 @@ function ready(playerText) {
 
 function optionClick(player, selectedOption, btn) {
     if(currentSelectedBtn !== null) {
+    
         currentSelectedBtn.style.borderColor = '#7d7d9a';
         currentSelectedBtn.style.color = '#2f3944';
         currentSelectedBtn.style.scale = 1.0;
     }
-    game.selectedOption(player, selectedOption);
-    btn.style.borderColor = '#EB7B7B';
+    const btnIcon = btn.querySelector('i');
+    btnIcon.classList.remove('bump-up');
+    void btnIcon.offsetWidth;
+    btnIcon.classList.add('bump-up');
+
+    btn.classList.add('bump-up');
+    game.selectedOption(player, selectedOption);;
+    // btn.style.border = '4.4px solid black';
+        btn.style.borderColor = '#EB7B7B'
     btn.style.scale = 1.1;
     btn.style.color = '#EB7B7B';
-
-    document.querySelectorAll('.card-container i').forEach(icon => {
-        icon.addEventListener('click', () => {
-            icon.classList.remove('bump-up'); // Reset animation
-            void icon.offsetWidth; // Force reflow to restart animation
-            icon.classList.add('bump-up');
-        });
-    });
     currentSelectedBtn = btn;
 }
+
+// document.querySelectorAll('.card-container i').forEach(icon => {
+//     icon.addEventListener('click', () => {
+//         icon.classList.remove('bump-up'); // Reset animation
+//         void icon.offsetWidth; // Force reflow to restart animation
+//         icon.classList.add('bump-up');
+//     });
+// });

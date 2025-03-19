@@ -157,6 +157,7 @@ button:active {
     animation-duration: 2s;
     animation-timing-function: ease;
     /* animation-direction: alternate; */
+    /* animation-iteration-count: infinite; */
 }
 
 /*animations */
@@ -167,8 +168,9 @@ button:active {
 }
 
 @keyframes bump-up {
-    from {transform: translateY(10px);}
-    to {transform: translateY(-10px);}
+    0% {transform: translateY(0px);}
+    50% {transform: translateY(-10px);}
+    100% {transform: translateY(0px);}
 }
 
 #winner-text {
