@@ -6,8 +6,28 @@
     <title>Rock Paper Scissors Play Page</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <script src="main.js" defer></script>
     <script src="https://kit.fontawesome.com/a68899de99.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+        window.onload = function() {
+            var socket = io();
+        
+            const currentBtns = document.getElementsByClassName("option-btn-1");
+            console.log(currentBtns);
+            for(let btn of currentBtns) {
+                btn.addEventListener('click', function(e) {
+                    console.log("added");
+                    socket.emit('option selected', btn.textContent);
+            }
+            )};
+
+            socket.on('option selected', function(option) {
+                console.log(option);
+            });
+        }
+
+    </script>
+    <script src="main.js" defer></script>
 </head>
 <body>
     <!-- <nav>
