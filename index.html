@@ -8,25 +8,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <script src="https://kit.fontawesome.com/a68899de99.js" crossorigin="anonymous"></script>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-    <script>
-        window.onload = function() {
-            var socket = io();
-        
-            const currentBtns = document.getElementsByClassName("option-btn-1");
-            console.log(currentBtns);
-            for(let btn of currentBtns) {
-                btn.addEventListener('click', function(e) {
-                    console.log("added");
-                    socket.emit('option selected', btn.textContent);
-            }
-            )};
-
-            socket.on('option selected', function(option) {
-                console.log(option);
-            });
-        }
-
-    </script>
     <script src="main.js" defer></script>
 </head>
 <body>
@@ -37,50 +18,120 @@
         </ul>
     </nav> -->
 
+    <!-- <div class="create-join-container"> -->
+        <!-- <div class="create-game-container"> -->
+            <!-- <div class="player-name-text-container">
+                <h1>Name:</h1>
+                <input type="text" id="player-text-field" placeholder="Enter your name here..."/>
+            </div>
+            <div class="code-text-container">
+                <h1>Code:</h1>
+                <input type="text" id="code-text-field" placeholder="Enter passcode here..."/>
+            </div> -->
+            <!-- <input type="text" id="player-text-field" placeholder="Enter your name here..."/> -->
+            <!-- <input type="text" id="code-text-field" placeholder="Enter passcode here..."/> -->
+            <!-- <button id="create-game"> -->
+                <!-- New Game -->
+            <!-- </button> -->
+        <!-- </div> -->
+        <!-- <div class="join-container">
+            <div class="player-name-text-container">
+                <h1>Name:</h1>
+                <input type="text" id="player-text-field" placeholder="Enter your name here..."/>
+            </div>
+            <div class="code-text-container">
+                <h1>Code:</h1>
+                <input type="text" id="code-text-field" placeholder="Enter passcode here..."/>
+            </div>
+            <input type="text" id="player-text-field" placeholder="Enter your name here..."/>
+            <input type="text" id="code-text-field" placeholder="Enter passcode here..."/>
+            <button id="player-join">
+                Join Game
+            </button>
+        </div>
+    </div> -->
+
+    <div class="join-container">
+        <!-- <div class="player-name-text-container">
+            <h1>Name:</h1>
+            <input type="text" id="player-text-field" placeholder="Enter your name here..."/>
+        </div>
+        <div class="code-text-container">
+            <h1>Code:</h1>
+            <input type="text" id="code-text-field" placeholder="Enter passcode here..."/>
+        </div> -->
+        <input type="text" id="player-text-field" placeholder="Enter your name here..."/>
+        <!-- <input type="text" id="code-text-field" placeholder="Enter passcode here..."/> -->
+        <button id="player-join">
+            Join Game
+        </button>
+    </div>
+
+    <div class="wait-container">
+        <h1>Waiting for Opponent!</h1>
+    </div>
+
     <div class="players-container">
         <div id="player1">
-            <h1 id="player1-name">Player One Name</h1>
-            <div class="option-container">
+            <div class="player-title">
+                <div id="player1-ready">
+                    <i class="fa-solid fa-x"></i>
+                </div>
+                <h1 id="player1-name">Player One Name</h1>
+            </div>
+            <div class="player-container">
                 <span class="title">You</span>
-                <div class="card-container" id="rock-container">
-                    <button class="option-btn-1" id="rock-btn">
-                        <span>Rock</span>
-                        <i class="fa-solid fa-hand-back-fist"></i>
-                    </button>
+                <div class="option-container">
+                    <div class="card-container" id="rock-container">
+                        <button class="option-btn-1" id="rock-btn">
+                            <span>Rock</span>
+                            <i class="fa-solid fa-hand-back-fist"></i>
+                        </button>
+                    </div>
+                    <div class="card-container" id="paper-container">
+                        <button class="option-btn-1" id="paper-btn">
+                            <span>Paper</span>
+                            <i class="fa-solid fa-hand"></i>
+                        </button>
+                    </div>
+                    <div class="card-container" id="scissors-container">
+                        <button class="option-btn-1" id="scissors-btn">
+                            <span>Scissors</span>
+                            <i class="fa-solid fa-hand-scissors"></i>
+                        </button>
+                    </div>
                 </div>
-                <div class="card-container" id="paper-container">
-                    <button class="option-btn-1" id="paper-btn">
-                        <span>Paper</span>
-                        <i class="fa-solid fa-hand"></i>
-                    </button>
-                </div>
-                <div class="card-container" id="scissors-container">
-                    <button class="option-btn-1" id="scissors-btn">
-                        <span>Scissors</span>
-                        <i class="fa-solid fa-hand-scissors"></i>
-                    </button>
-                </div>
+                <span class="score" id="self-score">0</span>
             </div>
         </div>
-        <div id="winner-text">
-            <h1>Awaiting Players to Choose Options...</h1>
+        <div id="winner-text-container">
+            <h1 id="winner-text">Awaiting Players to Choose Options...</h1>
         </div>
+        <!-- <i class="fa-solid fa-check"></i> -->
         <div id="player2">
-            <h1 id="player2-name">Player Two Name</h1>
-            <div class="option-container">
+            <div class="player-title">
+                <div id="player2-ready">
+                    <i class="fa-solid fa-x"></i>
+                </div>
+                <h1 id="player2-name">Player One Name</h1>
+            </div>
+            <div class="player-container">
                 <span class="title">Enemy</span>
-                <div class="card-container" id="rock-container">
-                    <span>Rock</span>
-                    <i class="fa-solid fa-question"></i>
+                <div class="option-container">
+                    <div class="card-container" id="rock-container">
+                        <span>Rock</span>
+                        <i class="fa-solid fa-question"></i>
+                    </div>
+                    <div class="card-container" id="paper-container">
+                        <span>Paper</span>
+                        <i class="fa-solid fa-question"></i>
+                    </div>
+                    <div class="card-container" id="scissors-container">
+                        <span>Scissors</span>
+                        <i class="fa-solid fa-question"></i>
+                    </div>
                 </div>
-                <div class="card-container" id="paper-container">
-                    <span>Paper</span>
-                    <i class="fa-solid fa-question"></i>
-                </div>
-                <div class="card-container" id="scissors-container">
-                    <span>Scissors</span>
-                    <i class="fa-solid fa-question"></i>
-                </div>
+                <span class="score" id="enemy-score">0</span>
             </div>
         </div>
     </div>

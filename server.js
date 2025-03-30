@@ -13,9 +13,17 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
     console.log('a user has connected');
-    socket.on('option selected', (option) => {
-        io.emit('option selected', option);
+    socket.on('player join', (id, name) => {
+        socket.broadcast.emit('player join', id, name);
     });
+    socket.on('option selected', (id, option) => {
+        // io.emit('option selected', option);
+        socket.broadcast.emit('option selected', id, option);
+        // console.log("option sel: " + option);
+    });
+    socket.on('disconnect', () => {
+        socket.emit('player disconnect');
+    })
 });
 
 server.listen(3000, () => {
