@@ -73,7 +73,7 @@ nav a:active {
     width: 100vw;
 }
 
-.join-container {
+.create-join-container div {
     display:flex;
     flex-direction: column-reverse;
     gap: 10px;
@@ -93,8 +93,8 @@ nav a:active {
     width: 100vw;
 }
 
-.join-container button {
-    width: 50%;
+.create-join-container button {
+    width: 30%;
     height: 10%;
     border-radius: 10px;
     overflow: hidden;
@@ -104,8 +104,8 @@ nav a:active {
     font-size: 3vh;
 }
 
-.join-container input {
-    width: 50%;
+.create-join-container input {
+    width: 30%;
     height: 2%;
     border-radius: 5px;
     background-color: var(--color-secondary);
@@ -113,7 +113,7 @@ nav a:active {
     color: var(--color-text-contrast);
 }
 
-.join-container input::placeholder {
+.create-join-container input::placeholder {
     color: var(--color-text-contrast-placeholder);
     /* font-size: 2vh; */
 }
@@ -256,6 +256,7 @@ nav a:active {
 
 button:hover {
     color: var(--color-tertiary-lighter);
+    border-color: var(--color-tertiary);
 }
 
 button:active {

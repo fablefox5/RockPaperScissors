@@ -1,40 +1,94 @@
 var socket = io("http://localhost:3000");
 
+const mainmenu = {
+    "joinBtn": {
+        "btn": document.getElementById("player-join"),
+        "playerName": document.getElementById("player-text-field-join"),
+        "gameCode": document.getElementById("code-text-field-join")
+    },
+    "createBtn": {
+        "btn": document.getElementById("create-game"),
+        "playerName": document.getElementById("player-text-field-create"),
+        "gameCode": document.getElementById("code-text-field-create")
+    }
+}
+
 const currentBtns = document.getElementsByClassName("option-btn-1");
 const joinBtn = document.getElementById("player-join");
+const createBtn = document.getElementById("create-game");
 const scoreTexts = document.getElementsByClassName("score");
 let currentSelectedBtn = null;
 let game = null;
 let playerSelf = null;
 let playerEnemy = null;
+let code = null;
+let playerIndex = null; //0 if creator, 1 if joiner
 
 const playerStatuses = [document.getElementById("player1-ready"), document.getElementById("player2-ready")];
 socket.on("connect", () => {
     for(let btn of currentBtns) {
         btn.onclick = function() {optionClick(btn)};
         btn.addEventListener('click', function(e) {
-            socket.emit('option selected', socket.id, btn.textContent);
+            socket.emit('option selected', socket.id, btn.textContent, code, enemyIndex);
             game.selectedOption(socket.id, btn.textContent);
         }
     )};
-    joinBtn.addEventListener('click', function(e) {
-        const nameField = document.getElementById("player-text-field");
-        socket.emit('player join', socket.id, nameField.value); //self
-        playerSelf = new Player(nameField.value, socket.id);
-        initializeGameCheck();
+    mainmenu["joinBtn"]["btn"].addEventListener('click', function(e) {
+        console.log("joined game");
+        if(playerSelf === null) {
+            playerSelf = new Player(mainmenu["joinBtn"]["playerName"].value, socket.id);
+        }
+        socket.emit('join game', mainmenu["joinBtn"]["gameCode"].value, playerSelf.ID, playerSelf.name);
+    })
+    mainmenu["createBtn"]["btn"].addEventListener('click', function(e) {
+        playerSelf = new Player(mainmenu["createBtn"]["playerName"].value, socket.id);
+        game = new Game();
+        socket.emit('create game', mainmenu["createBtn"]["gameCode"].value, playerSelf.ID, playerSelf.name);
+    })
+
+    socket.on("join game", (gameResult, playerID, playerName) => {
+        if(gameResult === "nonfound") {
+            alert("no game with code given, try again");
+        }
+        else {
+            if(game === null) { //self joining to creator
+                enemyIndex = 0;
+                code = mainmenu["joinBtn"]["gameCode"].value;
+                playerEnemy = new Player(playerName, playerID);
+                game = new Game();
+                game.AddPlayer(playerSelf.ID, playerSelf);
+                // game.AddPlayer(playerEnemy.ID, playerEnemy);
+                initializeGameCheck();
+            }
+            else { //for creator to add enemy
+                enemyIndex = 1;
+                playerEnemy = new Player(playerName, playerID);
+                game.AddPlayer(playerSelf.ID, playerSelf);
+                // game.AddPlayer(playerEnemy.ID, playerEnemy);
+            }
+        }
+    })
+
+    socket.on("create game", (gameCode, playerID, playerName) => {
+        if(gameCode === 'success') {
+            code = mainmenu["createBtn"]["gameCode"].value;
+            initializeGameCheck();
+        }
+        else if(gameCode === 'nonunique') {
+            alert("game code already in use, try a different code");
+        }
     })
 
     socket.on("player join", (id, name) => {
-        console.log(`user with id: ${id} has joined!`); //enemy
         playerEnemy = new Player(name, id);
         
     })
-    socket.on("option selected", (id, option) => {
+    socket.on("option selected", (id, option, gameCode) => {
         enemyReady();
         game.selectedOption(id, option);
     });
     socket.on("player disconnect", () => {
-        console.log("jut disconnected");
+        console.log("just disconnected");
         if(game !== null)
         {
             console.log("disconnected while game on");
@@ -56,26 +110,6 @@ class Player {
         this.wins = 0;
         this.losses = 0;
         this.ID = ID;
-    }
-
-    getID() {
-        return this.ID;
-    }
-
-    setName(newName) {
-        this.name = newName;
-        if(this.ID === 1)
-        {
-            document.getElementById("player1-name").textContent = newName;
-        }
-        else
-        {
-            document.getElementById("player2-name").textContent = newName;
-        }
-    }
-
-    getName() {
-        return this.name;
     }
 
     setOption(newOption) {
@@ -110,28 +144,26 @@ class Player {
 }
 
 class Game {
-    constructor(player1= null, player2 = null) {
+    constructor() {
         this.players = {
-            // player1ID: player1,
-            // player2ID: player2
         }
-        this.players[player1.getID()] = player1;
-        this.players[player2.getID()] = player2;
+
         this.isSetup = false;
         this.winnerText = document.getElementById("winner-text");
     }
 
-    AddPlayer(playerID, playerName) {
-        this.players.add(new Player(playerName, playerID));
+    AddPlayer(newPlayerID, newPlayer) {
+        console.log("new player asdded!", newPlayer);
+        this.players[newPlayerID] = newPlayer;
     }
 
     gameSetup() {
         const player1Name = document.getElementById("player1-name");
-        player1Name.textContent = playerSelf.getName();
+        player1Name.textContent = playerSelf.name;
         
         
         const player2Name = document.getElementById("player2-name");
-        player2Name.textContent = playerEnemy.getName();
+        player2Name.textContent = playerEnemy.name;
         this.isSetup = true;
     }
 
@@ -145,6 +177,8 @@ class Game {
     }
 
     selectedOption(playerID, option) {
+        console.log(this.players);
+        console.log(playerID);
         this.players[playerID].setOption(option);
         if(this.playersReady()) {
             this.checkWinner();
@@ -152,24 +186,24 @@ class Game {
     }
 
     checkWinner() {
-        if(this.players[playerSelf.getID()].getOption() !== null && this.players[playerEnemy.getID()].getOption() !== null) {
-            const selfOption = this.players[playerSelf.getID()].getOption().trim();
-            const enemyOption = this.players[playerEnemy.getID()].getOption().trim();
+        if(this.players[playerSelf.ID].getOption() !== null && this.players[playerEnemy.ID].getOption() !== null) {
+            const selfOption = this.players[playerSelf.ID].getOption().trim();
+            const enemyOption = this.players[playerEnemy.ID].getOption().trim();
             if(selfOption === enemyOption) {
                 this.winnerText.textContent = "Tie";
                 console.log("TIE");
             }
             //WIN LOSS found match found for player 1 - player 1 wins
             else if(WIN_DICT[selfOption] === enemyOption) {
-                this.players[playerSelf.getID()].addWin();
-                scoreTexts[0].textContent = this.players[playerSelf.getID()].getWins();
-                this.players[playerEnemy.getID()].addLoss();
+                this.players[playerSelf.ID].addWin();
+                scoreTexts[0].textContent = this.players[playerSelf.ID].getWins();
+                this.players[playerEnemy.ID].addLoss();
                 this.winnerText.textContent = `You won! Next Round Starting Soon...`;
             }
             else if(WIN_DICT[enemyOption] === selfOption) {
-                this.players[playerEnemy.getID()].addWin();
-                this.players[playerSelf.getID()].addLoss();
-                scoreTexts[1].textContent = this.players[playerEnemy.getID()].getWins();
+                this.players[playerEnemy.ID].addWin();
+                this.players[playerSelf.ID].addLoss();
+                scoreTexts[1].textContent = this.players[playerEnemy.ID].getWins();
                 this.winnerText.textContent = `You Lost! Next Round Starting Soon...`;
             }
             else {
@@ -201,8 +235,8 @@ class Game {
 
         console.log(this.winnerText);
         this.winnerText.textContent = "Awaiting Players to Choose Options...";
-        this.players[playerSelf.getID()].resetOption();
-        this.players[playerEnemy.getID()].resetOption();
+        this.players[playerSelf.ID].resetOption();
+        this.players[playerEnemy.ID].resetOption();
         optionUnClick();
     }
 }
@@ -218,6 +252,7 @@ function ready(playerText) {
 function optionClick(btn) {
     if(currentSelectedBtn !== null) {
     
+        btn.classList.remove('selected');
         currentSelectedBtn.style.borderColor = '#7d7d9a';
         currentSelectedBtn.style.color = '#2f3944';
         currentSelectedBtn.style.scale = 1.0;
@@ -229,8 +264,9 @@ function optionClick(btn) {
 
     btn.classList.add('bump-up');
     btn.style.scale = 1.1;
+    btn.classList.add('selected');
     btn.style.color = '#EB7B7B';
-       btn.style.borderColor = '#EB7B7B';
+    btn.style.borderColor = '#EB7B7B';
     currentSelectedBtn = btn;
 
     
@@ -255,23 +291,30 @@ function optionUnClick() {
 }
 
 function initializeGameCheck() {
+    console.log("enemy stastus:", playerEnemy);
     const waitScreen = document.getElementsByClassName('wait-container');
-    const joinScreen = document.getElementsByClassName('join-container');
-    joinScreen[0].style.display = 'none';
+    const joinCreateScreen = document.getElementsByClassName('create-join-container');
+    // const joinScreen = document.getElementsByClassName('join-container');
+    // const createScreen = document.getElementsByClassName('create-game-container');
+    // joinScreen[0].style.display = 'none';
+    // createScreen[0].style.display = 'none';
+    joinCreateScreen[0].style.display = "none";
     waitScreen[0].style.display = "flex";
 
     const checkPlayerEnemy = setInterval(() => {
+        console.log("playerName: " + playerSelf);
+        console.log("game:", game);
         if(playerEnemy !== null)
         {
             clearInterval(checkPlayerEnemy);
             waitScreen[0].style.display = "none";
-            game = new Game(playerSelf, playerEnemy); //put players in here
+            game.AddPlayer(playerEnemy.ID, playerEnemy);
             game.gameSetup();
             const gameScreen = document.getElementsByClassName("players-container");
             console.log(gameScreen);
             gameScreen[0].style.display = 'flex';
         }
-    }, 100);
+    }, 3000);
 }
 
 function enemyReady() {
