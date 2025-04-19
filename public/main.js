@@ -1,4 +1,4 @@
-var socket = io("http://localhost:3000");
+var socket = io("http://rock-paper-scissors-server.glitch.me/");
 
 const mainmenu = {
     "joinBtn": {
@@ -17,6 +17,9 @@ const currentBtns = document.getElementsByClassName("option-btn-1");
 const joinBtn = document.getElementById("player-join");
 const createBtn = document.getElementById("create-game");
 const scoreTexts = document.getElementsByClassName("score");
+const modalContainers = document.getElementsByClassName("modal-container");
+const footerBtns = document.getElementById("footer").getElementsByTagName("button");
+let isModalOpen = false;
 let currentSelectedBtn = null;
 let game = null;
 let playerSelf = null;
@@ -33,6 +36,24 @@ socket.on("connect", () => {
             game.selectedOption(socket.id, btn.textContent);
         }
     )};
+
+    for(let modalContainer of modalContainers) {
+        const modal = modalContainer.getElementsByClassName("modal")[0];
+        const btn = modal.getElementsByTagName("button")[0];
+        btn.addEventListener('click', function(e) {
+            modalContainer.style.display = "none";
+            isModalOpen = false;
+        })
+        };
+
+    for(let i = 0; i < footerBtns.length; i++) {
+        footerBtns[i].addEventListener('click', function(e) {
+            if(!isModalOpen) {
+                modalContainers[i].style.display = "inline-block";
+                isModalOpen = true;
+            }
+        })
+    }
     mainmenu["joinBtn"]["btn"].addEventListener('click', function(e) {
         console.log("joined game");
         if(playerSelf === null) {
@@ -41,9 +62,14 @@ socket.on("connect", () => {
         socket.emit('join game', mainmenu["joinBtn"]["gameCode"].value, playerSelf.ID, playerSelf.name);
     })
     mainmenu["createBtn"]["btn"].addEventListener('click', function(e) {
-        playerSelf = new Player(mainmenu["createBtn"]["playerName"].value, socket.id);
-        game = new Game();
-        socket.emit('create game', mainmenu["createBtn"]["gameCode"].value, playerSelf.ID, playerSelf.name);
+        if(mainmenu["createBtn"]["gameCode"].value === "") {
+            alert("Please enter a code for your game");
+        }
+        else {
+            playerSelf = new Player(mainmenu["createBtn"]["playerName"].value, socket.id);
+            game = new Game();
+            socket.emit('create game', mainmenu["createBtn"]["gameCode"].value, playerSelf.ID, playerSelf.name);
+        }
     })
 
     socket.on("join game", (gameResult, playerID, playerName) => {
@@ -211,7 +237,7 @@ class Game {
             }
             // this.resetRound();
             for(let btn of currentBtns) {
-                btn.disabled = true;  
+                // btn.disabled = true;  
             }
             setTimeout(this.resetRound.bind(this), 3000);
         }
@@ -219,7 +245,7 @@ class Game {
 
     resetRound() { 
         for(let btn of currentBtns) {
-            btn.disabled = false;  
+            // btn.disabled = false;  
         }
 
         const xIcon = document.createElement('i');
@@ -252,7 +278,7 @@ function ready(playerText) {
 function optionClick(btn) {
     if(currentSelectedBtn !== null) {
     
-        btn.classList.remove('selected');
+        currentSelectedBtn.classList.remove('selected');
         currentSelectedBtn.style.borderColor = '#7d7d9a';
         currentSelectedBtn.style.color = '#2f3944';
         currentSelectedBtn.style.scale = 1.0;

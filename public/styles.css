@@ -10,7 +10,7 @@ body {
     --color-tertiary: #EB7B7B; /*10%*/
     --color-tertiary-lighter: #ce9797; /*10%*/
     --color-text: #2f3944;
-    --color-text-contrast: #fdfcfa;
+    --color-text-contrast: #ebe8e4;
     --color-text-contrast-placeholder: #dddbd6;
     --color-not-ready: #CF4930;
     --color-ready: #47B85E;
@@ -61,52 +61,150 @@ nav a:active {
     transform: translate(1px, 1px);
 }
 
+/* title */
+.game-title {
+    position: relative;
+    display: inline-block;
+    margin-left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+    font-size: 2rem;
+    margin-top: 20vh;
+    margin-bottom: 5%;
+    border-bottom: 5px solid black;
+    border-radius: 2%;
+    animation: fade linear 1.5s;
+}
+
+
+.game-title #title-1 {
+    position: relative;
+    color: #000000;
+    text-align: center;
+    z-index: 2;
+}
+
+.game-title #title-2 {
+    position: relative;
+    text-align: center;
+    color: #000000;
+    z-index: 2;
+}
+
+.game-title #top-border {
+    border-top: 5px solid black;
+    border-radius: 2%;
+    z-index: 0;
+}
+
+#logo-img {
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    left: 50%;
+    transform: translate(-50%, -54.5%);
+    z-index: 1;
+    /* opacity: ; */
+    top: 0;
+    z-index: 0;
+}
+
+
 /* join/create game */
+
+.hero-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* height: 100vh; */
+    /* width: 100vw; */
+    box-sizing: border-box;
+    /* border: 5px solid var(--color-secondary); */
+    border-radius: 10px;
+    opacity: 0;
+    animation: fade 1.5s linear 0.5s 1 forwards;
+}
+
+@keyframes fade {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
 
 .create-join-container {
     display: flex;
     flex-direction: row;
-    gap: 10px;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    width: 100vw;
+    background-color: #737392;
+    border: 1px solid #737392;
+    border-radius: 20px;
+    gap: 50px;
+    opacity: 0;
+    padding: 2vw;
+
+    animation: fade 0.5s linear 0.0s 1 forwards;
+}
+
+@keyframes fade {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 100;
+    }
+}
+
+.join-container {
+    display:flex;
+    flex-direction: column-reverse;
+    justify-content: center;
+    align-items: center;
+    background-color: #9898b9;
+    border: 1px solid #9898b9;
+    border-radius: 10px;
+    padding: 5vw;
 }
 
 .create-join-container div {
     display:flex;
     flex-direction: column-reverse;
-    gap: 10px;
+    gap: 30px;
+    height: 100%;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    width: 100vw;
 }
 
 .create-game-container {
     display:flex;
     flex-direction: column-reverse;
-    gap: 10px;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    width: 100vw;
+    background-color: #9898b9;
+    border: 1px solid #9898b9;
+    border-radius: 10px;
+    padding: 5vw;
 }
 
 .create-join-container button {
-    width: 30%;
+    /* width: 30%; */
     height: 10%;
     border-radius: 10px;
     overflow: hidden;
+    margin-bottom: 15%;
     background-color: var(--color-secondary);
     border: 4px solid var(--color-secondary);
-    color: var(--color-text);
+    color: var(--color-text-contrast);
     font-size: 3vh;
 }
 
 .create-join-container input {
-    width: 30%;
-    height: 2%;
+    font-size: 16px;
     border-radius: 5px;
     background-color: var(--color-secondary);
     border: 4px solid var(--color-secondary);
@@ -126,14 +224,14 @@ nav a:active {
 
 } */
 
-/* .join-container div {
+.join-container div {
     display:flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
     width: 50%;
     height: 25%;
-} */
+}
 
 /* wait for players */
 .wait-container {
@@ -271,6 +369,28 @@ button:active {
     margin: auto;
 }
 
+#bg-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-color: var(--color-primary);
+    filter: opacity(35%);
+}
+
+/* @media (prefers-reduced-motion: no-preference) {
+    #bg-canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background-color: var(--color-primary);
+    }
+} */
 
 button i.bump-up {
     animation-name: bump-up;
@@ -318,4 +438,92 @@ button i.bump-up {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+/* footer */
+footer {
+    position: absolute;
+    top: 90vh;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: row;
+    gap: 20vw;
+    width: 80%;
+    justify-content: center;
+    border-top: 2px solid rgba(0, 0, 0, 0.5);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    padding: 1%;
+}
+
+footer button {
+    background-color: var(--color-secondary);
+    color: var(--color-text-contrast);
+    padding: 5px;
+    border-radius: 5px;
+
+}
+
+/* modals */
+
+.modal-container {
+    display:none;
+    position:absolute;
+    top:0;
+    left:0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(58, 58, 58, 0.4);
+}
+
+.modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(58, 58, 58, 0.8);
+    color: var(--color-text-contrast);
+    padding: 2% 5% 15% 5%;
+    z-index: 10;
+    width: 30%;
+    height: 15%;
+}
+.modal .modal-content{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+    align-items: start;
+}
+
+.modal ul {
+    list-style-type: none;
+}
+
+.modal ul li {
+    margin-bottom: 1rem;
+}
+
+.modal ul li a {
+    color: var(--color-text-contrast);
+}
+
+.modal button {
+    position: absolute;
+    top: 5%;
+    left: 90%;
+    font-size: 1.2rem;
+    color: var(--color-text-contrast);
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 0.3vh 0.6vw;
+    box-shadow: none;
+    outline: none;
+    border: 1px solid black;
+}
+
+.modal button:hover {
+    color: var(--color-not-ready);
+    cursor: pointer;
 }
