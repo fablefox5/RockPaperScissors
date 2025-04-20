@@ -9,11 +9,11 @@ scissorsImage.src = './svgs/hand-scissors-solid-red.svg';
 
 let rockLoaded = false;
 const rockImage = new Image();
-rockImage.src = './svgs/hand-back-fist-solid-red.svg';
+rockImage.src = 'svgs/hand-back-fist-solid-red.svg';
 
 let paperLoaded = false;
 const paperImage = new Image();
-paperImage.src = './svgs/hand-solid-red.svg';
+paperImage.src = 'svgs/hand-solid-red.svg';
 
 
 
