@@ -5,15 +5,15 @@ canvas.height = window.innerHeight;
 
 let scissorsLoaded = false;
 const scissorsImage = new Image();
-scissorsImage.src = 'RockPaperScissors/svgs/hand-scissors-solid-red.svg';
+scissorsImage.src = './svgs/hand-scissors-solid-red.svg';
 
 let rockLoaded = false;
 const rockImage = new Image();
-rockImage.src = 'RockPaperScissors/svgs/hand-back-fist-solid-red.svg';
+rockImage.src = './svgs/hand-back-fist-solid-red.svg';
 
 let paperLoaded = false;
 const paperImage = new Image();
-paperImage.src = 'RockPaperScissors/svgs/hand-solid-red.svg';
+paperImage.src = './svgs/hand-solid-red.svg';
 
 
 
