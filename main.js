@@ -1,4 +1,4 @@
-var socket = io("http://rock-paper-scissors-server.glitch.me/", {
+var socket = io("https://rock-paper-scissors-server.glitch.me/", {
     headers: {
         "user-agent": "Mozilla"
     }
