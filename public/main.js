@@ -1,4 +1,8 @@
-var socket = io("http://rock-paper-scissors-server.glitch.me/");
+var socket = io("http://rock-paper-scissors-server.glitch.me/", {
+    headers: {
+        "user-agent": "Mozilla"
+    }
+});
 
 const mainmenu = {
     "joinBtn": {
