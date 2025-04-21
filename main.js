@@ -4,6 +4,8 @@ var socket = io("https://rock-paper-scissors-server.glitch.me/", {
     }
 });
 
+console.log("is connected?: " + socket.connected);
+
 const mainmenu = {
     "joinBtn": {
         "btn": document.getElementById("player-join"),
