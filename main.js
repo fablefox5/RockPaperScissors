@@ -3,8 +3,8 @@ var socket = io("https://rock-paper-scissors-server.glitch.me/", {
         "user-agent": "Mozilla"
     }
 });
-
-console.log("is connected?: " + socket.connected);
+// https://rock-paper-scissors-server.glitch.me/
+// var socket = io("localhost:3000/");
 
 const mainmenu = {
     "joinBtn": {
@@ -16,6 +16,10 @@ const mainmenu = {
         "btn": document.getElementById("create-game"),
         "playerName": document.getElementById("player-text-field-create"),
         "gameCode": document.getElementById("code-text-field-create")
+    },
+    "footer": {
+        "main": document.getElementById("footer"),
+        "btns": document.getElementById("footer").getElementsByTagName("button"),
     }
 }
 
@@ -24,7 +28,8 @@ const joinBtn = document.getElementById("player-join");
 const createBtn = document.getElementById("create-game");
 const scoreTexts = document.getElementsByClassName("score");
 const modalContainers = document.getElementsByClassName("modal-container");
-const footerBtns = document.getElementById("footer").getElementsByTagName("button");
+const serverStatus = document.getElementById("server-status");
+// const footerBtns = document.getElementById("footer").getElementsByTagName("button");
 let isModalOpen = false;
 let currentSelectedBtn = null;
 let game = null;
@@ -32,8 +37,29 @@ let playerSelf = null;
 let playerEnemy = null;
 let code = null;
 let playerIndex = null; //0 if creator, 1 if joiner
-
+console.log("footer btns: " + mainmenu["footer"]["btns"]);
 const playerStatuses = [document.getElementById("player1-ready"), document.getElementById("player2-ready")];
+
+
+for(let i = 0; i < mainmenu["footer"]["btns"].length; i++) {
+    mainmenu["footer"]["btns"][i].addEventListener('click', function(e) {
+        if(!isModalOpen) {
+            modalContainers[i].style.display = "inline-block";
+            isModalOpen = true;
+        }
+    })
+
+for(let modalContainer of modalContainers) {
+    const modal = modalContainer.getElementsByClassName("modal")[0];
+    const btn = modal.getElementsByTagName("button")[0];
+    btn.addEventListener('click', function(e) {
+        modalContainer.style.display = "none";
+        isModalOpen = false;
+    })
+    };
+
+
+
 socket.on("connect", () => {
     for(let btn of currentBtns) {
         btn.onclick = function() {optionClick(btn)};
@@ -42,24 +68,10 @@ socket.on("connect", () => {
             game.selectedOption(socket.id, btn.textContent);
         }
     )};
-
-    for(let modalContainer of modalContainers) {
-        const modal = modalContainer.getElementsByClassName("modal")[0];
-        const btn = modal.getElementsByTagName("button")[0];
-        btn.addEventListener('click', function(e) {
-            modalContainer.style.display = "none";
-            isModalOpen = false;
-        })
-        };
-
-    for(let i = 0; i < footerBtns.length; i++) {
-        footerBtns[i].addEventListener('click', function(e) {
-            if(!isModalOpen) {
-                modalContainers[i].style.display = "inline-block";
-                isModalOpen = true;
-            }
-        })
-    }
+    serverStatus.getElementsByClassName("status-text")[0].classList.replace("server-off", "server-on");
+    serverStatus.getElementsByClassName("status-text")[0].innerText = "Online";
+    serverStatus.getElementsByTagName("i")[0].classList.replace("server-off", "server-on");
+    
     mainmenu["joinBtn"]["btn"].addEventListener('click', function(e) {
         console.log("joined game");
         if(playerSelf === null) {
@@ -74,6 +86,7 @@ socket.on("connect", () => {
         else {
             playerSelf = new Player(mainmenu["createBtn"]["playerName"].value, socket.id);
             game = new Game();
+            console.log('Emitting create game event');
             socket.emit('create game', mainmenu["createBtn"]["gameCode"].value, playerSelf.ID, playerSelf.name);
         }
     })
@@ -394,6 +407,5 @@ function resetGame() {
     playerStatuses[0].replaceWith(xIcon);
     playerStatuses[1].replaceWith(xIcon);
     optionUnClick();
-
-
+    }
 }

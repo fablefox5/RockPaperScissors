@@ -38,6 +38,9 @@ io.on('connection', (socket) => {
     })
     socket.on('create game', (gameCode, playerID, playerName) => {
         if(gameCode in games) {
+            for(let game in games) {
+                console.log(games);
+            }
             socket.emit('create game', 'nonunique');
         }
         else {
